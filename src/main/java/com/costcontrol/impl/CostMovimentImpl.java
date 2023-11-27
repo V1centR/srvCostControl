@@ -17,6 +17,10 @@ public class CostMovimentImpl implements CostMovimentService {
 	@Override
 	public Iterable<Moventcost> findAll() {
 		return repo.findAll();
-	}	
+	}
+	
+	public Moventcost save(Moventcost item) {
+		return repo.save(item);
+	}
 
 }
