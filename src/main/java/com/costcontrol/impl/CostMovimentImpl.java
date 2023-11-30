@@ -1,5 +1,7 @@
 package com.costcontrol.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,11 @@ public class CostMovimentImpl implements CostMovimentService {
 	
 	public Moventcost save(Moventcost item) {
 		return repo.save(item);
+	}
+	
+	@Override
+	public Iterable<Moventcost> findByDate(String startDate, String endDate){
+		return repo.findByDate(startDate, endDate);
 	}
 
 }

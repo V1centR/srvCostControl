@@ -10,10 +10,10 @@ public class RegisterCostDto {
 		
 		Moventcost movementCost = new Moventcost();
 		
-		movementCost.setCurrencyvalue(postData.getDouble("currencyValue"));
-		movementCost.setDateregister(postData.getString("dateRegister"));
+		movementCost.setCurrencyvalue(postData.getDouble("currencyvalue"));
+		movementCost.setDateregister(postData.getString("dateregister"));
 		movementCost.setDirection(postData.getString("direction")); //APPLY ENUM
-		movementCost.setJusttificationtxt(postData.getString("justtificationTxt"));
+		movementCost.setJusttificationtxt(postData.getString("justtificationtxt"));
 		
 		return movementCost;
 	}

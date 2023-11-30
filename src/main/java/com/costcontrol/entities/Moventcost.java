@@ -1,6 +1,7 @@
 package com.costcontrol.entities;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,6 +34,8 @@ public class Moventcost implements Serializable {
 	private String direction;
 
 	private String justtificationtxt;
+	
+	private String registerdate;
 
 	public Moventcost() {
 	}
