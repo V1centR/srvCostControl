@@ -1,6 +1,8 @@
 package com.costcontrol.controller;
 
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.costcontrol.dto.RegisterCostDto;
 import com.costcontrol.entities.Moventcost;
+import com.costcontrol.enums.DirectionEnum;
 import com.costcontrol.impl.CostMovimentImpl;
+import com.costcontrol.response.CostsByDateResponse;
+import com.costcontrol.response.EmptyDataResponse;
+import com.google.gson.Gson;
 
 
 @RestController
@@ -24,7 +30,6 @@ public class RegisterCostController {
 	
 	@Autowired
 	CostMovimentImpl service;
-	
 	
 	@CrossOrigin
 	@GetMapping("/all")
@@ -62,15 +67,54 @@ public class RegisterCostController {
 	}
 	
 	@CrossOrigin
-	@GetMapping("/bydate")
-	public Iterable<Moventcost> getCostsByDate(@RequestBody String postData) {
+	@PostMapping(path="/bydate",produces = "application/json")
+	public String getCostsByDate(@RequestBody String postData) {
 		
 		JSONObject jsonItem = new JSONObject(postData);
 		
 		String startDate = jsonItem.getString("startDate");
-		String endDate = jsonItem.getString("endDate");
+		Boolean consolidated = Boolean.valueOf(jsonItem.getString("consolidated"));
+		Gson response = new Gson();
 		
-		return service.findByDate(startDate,endDate);
+		try {
+			
+			if(consolidated) {
+				
+				BigDecimal enterTotalValue = BigDecimal.ZERO;
+				BigDecimal exitTotalValue = BigDecimal.ZERO;
+				
+				for(Moventcost item : service.findByDate(startDate)) {
+					
+					if(item.getDirection().equals(DirectionEnum.EXIT.toString())) {
+						exitTotalValue = exitTotalValue.add(new BigDecimal(item.getCurrencyvalue()));
+					}
+					
+					if(item.getDirection().equals(DirectionEnum.ENTER.toString())) {
+						enterTotalValue = enterTotalValue.add(new BigDecimal(item.getCurrencyvalue()));
+					}
+				}
+				
+				CostsByDateResponse consolidatedResponse = new CostsByDateResponse();
+				
+				consolidatedResponse.setEnter(enterTotalValue.setScale(2, RoundingMode.HALF_UP));
+				consolidatedResponse.setExit(exitTotalValue.setScale(2, RoundingMode.HALF_UP));
+				consolidatedResponse.setDailyLimit(new BigDecimal("75.00").setScale(2, RoundingMode.HALF_UP));
+				
+				return response.toJson(consolidatedResponse);
+				
+			} else {
+				return response.toJson(service.findByDate(startDate));
+			}
+			
+			
+		} catch (Exception e) {
+			EmptyDataResponse emptyResponse = new EmptyDataResponse();
+			emptyResponse.setMsg(e.getMessage());
+			emptyResponse.setStatus(HttpStatus.OK);
+			
+			return response.toJson(emptyResponse);
+		}
+		
 	}
 	
 	

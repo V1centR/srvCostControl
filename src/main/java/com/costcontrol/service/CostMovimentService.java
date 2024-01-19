@@ -11,5 +11,5 @@ public interface CostMovimentService {
 
 	public Iterable<Moventcost> findAll();
 	
-	public Iterable<Moventcost> findByDate(String startDate,String endDate);
+	public Iterable<Moventcost> findByDate(String startDate);
 }
