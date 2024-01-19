@@ -35,7 +35,7 @@ public class Moventcost implements Serializable {
 
 	private String justtificationtxt;
 	
-	private String registerdate;
+	//private String registerdate;
 
 	public Moventcost() {
 	}
